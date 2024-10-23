@@ -113,6 +113,12 @@ export declare function setConcurrencyLimits(maxRequests: number, maxRequestsPer
 export declare function clearCookies(): void;
 
 /**
+ * Allow SSL errors and self-signed certificates
+ * @param allow true/false
+ */
+export declare function allowSslErrors(allow: boolean): void;
+
+/**
  * Set a global user agent.
  * @param userAgent The new user agent. Set to null to use the default again.
  */

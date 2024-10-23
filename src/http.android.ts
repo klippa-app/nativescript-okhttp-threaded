@@ -496,6 +496,10 @@ export function clearCookies() {
     com.klippa.NativeScriptHTTP.Async.Http.ClearCookies();
 }
 
+export function allowSslErrors(allow: boolean) {
+    com.klippa.NativeScriptHTTP.Async.Http.AllowSslErrors(allow);
+}
+
 export function setUserAgent(userAgent?: string) {
     customUserAgent = userAgent;
 }
