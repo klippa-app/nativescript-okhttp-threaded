@@ -231,6 +231,7 @@ public class Async {
         }
 
         public static void AllowSslErrors(boolean allow) {
+            client = null;
             allowSslErrors = allow;
             InitClient();
         }

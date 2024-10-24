@@ -114,6 +114,7 @@ export declare function clearCookies(): void;
 
 /**
  * Allow SSL errors and self-signed certificates
+ * ** Only Android **
  * @param allow true/false
  */
 export declare function allowSslErrors(allow: boolean): void;

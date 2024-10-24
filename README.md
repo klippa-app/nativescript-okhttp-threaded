@@ -483,6 +483,20 @@ certificatePinningAdd("mydomain.com", ["DCU5TkA8n3L8+QM7dyTjfRlxWibigF+1cxMzRhlJ
 certificatePinningClear();
 ```
 
+### Allow SSL errors and self-signed certificates
+
+You can allow SSL errors and self-signed certificates if you want. This only works on android devices.
+
+```typescript
+import { allowSslErrors } from "@klippa/nativescript-http";
+
+/**
+ * Allow SSL errors and self-signed certificates
+ * @param allow true/false
+ */
+allowSslErrors(true);
+```
+
 ## Roadmap
  * Cache control
  * Allowing self signed certificates (WIP in feature/self-signed)
