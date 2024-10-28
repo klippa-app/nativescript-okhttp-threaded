@@ -25,7 +25,7 @@ declare module com {
 					public static class: java.lang.Class<com.klippa.NativeScriptHTTP.Async.Http>;
 					public static SetConcurrencyLimits(param0: number, param1: number): void;
 					public static ClearCookies(): void;
-					public static AllowSslErrors(param0: boolean): void;
+					public static DisableSSLValidation(param0: boolean): void;
 					public static MakeRequest(param0: com.klippa.NativeScriptHTTP.Async.Http.RequestOptions, param1: com.klippa.NativeScriptHTTP.Async.CompleteCallback, param2: any): void;
 					public constructor();
 					public static InitClient(): void;

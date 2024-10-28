@@ -89,7 +89,7 @@ public class Async {
         private static MemoryCookieJar cookieJar;
         private static CertificatePinner.Builder certificatePinnerBuilder;
         private static ImageParseMethod imageParseMethod = ImageParseMethod.CONTENTTYPE;
-        private static boolean allowSslErrors = false;
+        private static boolean disableSslValidation = false;
 
         public static void InitClient() {
             if (cookieJar == null) {
@@ -97,8 +97,14 @@ public class Async {
             }
 
             if (client == null) {
-                if (allowSslErrors) {
-                    // Allow all ssl errors
+                OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                    .writeTimeout(60, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .cookieJar(cookieJar);
+
+                if (disableSslValidation) {
+                    // Disable ssl validations
                     try {
                         javax.net.ssl.TrustManager TRUST_ALL_CERTS = new javax.net.ssl.X509TrustManager() {
                             @Override
@@ -117,33 +123,21 @@ public class Async {
 
                         javax.net.ssl.SSLContext sslContext = javax.net.ssl.SSLContext.getInstance("SSL");
                         sslContext.init(null, new javax.net.ssl.TrustManager[] { TRUST_ALL_CERTS }, new java.security.SecureRandom());
-                        client = new OkHttpClient.Builder()
-                            .writeTimeout(60, TimeUnit.SECONDS)
-                            .readTimeout(60, TimeUnit.SECONDS)
-                            .connectTimeout(60, TimeUnit.SECONDS)
-                            .sslSocketFactory(sslContext.getSocketFactory(), (javax.net.ssl.X509TrustManager) TRUST_ALL_CERTS)
+                        builder.sslSocketFactory(sslContext.getSocketFactory(), (javax.net.ssl.X509TrustManager) TRUST_ALL_CERTS)
                             .hostnameVerifier(new javax.net.ssl.HostnameVerifier() {
                                 @Override
                                 public boolean verify(String hostname, javax.net.ssl.SSLSession session) {
                                     return true;
                                 }
-                            })
-                            .cookieJar(cookieJar)
-                            .build();
+                            });
                     }  catch (java.security.KeyManagementException e) {
                         e.printStackTrace();
                     } catch (java.security.NoSuchAlgorithmException e) {
                         e.printStackTrace();
                     }
-                    return;
                 }
 
-                client = new OkHttpClient.Builder()
-                        .writeTimeout(60, TimeUnit.SECONDS)
-                        .readTimeout(60, TimeUnit.SECONDS)
-                        .connectTimeout(60, TimeUnit.SECONDS)
-                        .cookieJar(cookieJar)
-                        .build();
+                client = builder.build();
             }
         }
 
@@ -230,9 +224,9 @@ public class Async {
             }
         }
 
-        public static void AllowSslErrors(boolean allow) {
+        public static void DisableSSLValidation(boolean disable) {
             client = null;
-            allowSslErrors = allow;
+            disableSslValidation = disable;
             InitClient();
         }
 

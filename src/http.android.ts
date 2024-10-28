@@ -496,8 +496,8 @@ export function clearCookies() {
     com.klippa.NativeScriptHTTP.Async.Http.ClearCookies();
 }
 
-export function allowSslErrors(allow: boolean) {
-    com.klippa.NativeScriptHTTP.Async.Http.AllowSslErrors(allow);
+export function disableSSLValidation(disable: boolean) {
+    com.klippa.NativeScriptHTTP.Async.Http.DisableSSLValidation(disable);
 }
 
 export function setUserAgent(userAgent?: string) {

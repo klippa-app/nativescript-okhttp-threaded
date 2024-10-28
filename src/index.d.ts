@@ -113,11 +113,10 @@ export declare function setConcurrencyLimits(maxRequests: number, maxRequestsPer
 export declare function clearCookies(): void;
 
 /**
- * Allow SSL errors and self-signed certificates
- * ** Only Android **
- * @param allow true/false
+ * Disable SSL validation
+ * @param disable true/false
  */
-export declare function allowSslErrors(allow: boolean): void;
+export declare function disableSSLValidation(disable: boolean): void;
 
 /**
  * Set a global user agent.
