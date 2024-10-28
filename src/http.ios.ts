@@ -461,6 +461,10 @@ export function setImageParseMethod(imageParseMethod: ImageParseMethod) {
     // Doesn't do anything for iOS.
 }
 
+export function disableSSLValidation(disable: boolean) {
+    // Doesn't do anything for iOS.
+}
+
 export function setConcurrencyLimits(maxRequests: number, maxRequestsPerHost: number) {
     sessionConfig.HTTPMaximumConnectionsPerHost = maxRequestsPerHost;
 }
