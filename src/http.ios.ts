@@ -28,6 +28,9 @@ let certificatePinningInstance: TrustKit = null;
 let certificatePinningConfig: NSDictionary<string, any> = null;
 let certificatePinningDomainList: NSDictionary<string, any> = null;
 
+// Is SSL validation disabled
+let isSSLValidationDisabled: boolean = false;
+
 function parseJSON(source: string): any {
     const src = source.trim();
     if (src.lastIndexOf(")") === src.length - 1) {
@@ -42,6 +45,15 @@ class NSURLSessionTaskDelegateImpl extends NSObject implements NSURLSessionTaskD
     public static ObjCProtocols = [NSURLSessionTaskDelegate];
 
     public URLSessionTaskDidReceiveChallengeCompletionHandler(session: NSURLSession, task: NSURLSessionTask, challenge: NSURLAuthenticationChallenge, completionHandler: (p1: NSURLSessionAuthChallengeDisposition, p2: NSURLCredential) => void) {
+        if (isSSLValidationDisabled) {
+            const trust = challenge.protectionSpace.serverTrust;
+            if (trust != null) {
+                const credential = NSURLCredential.credentialForTrust(trust);
+                completionHandler(NSURLSessionAuthChallengeDisposition.UseCredential, credential);
+                return;
+            }
+        }
+        
         // Default behaviour when we don't want certificate pinning.
         if (certificatePinningInstance == null) {
             completionHandler(NSURLSessionAuthChallengeDisposition.PerformDefaultHandling, null);
@@ -67,6 +79,15 @@ class NoRedirectNSURLSessionTaskDelegateImpl extends NSObject implements NSURLSe
     public static ObjCProtocols = [NSURLSessionTaskDelegate];
 
     public URLSessionTaskDidReceiveChallengeCompletionHandler(session: NSURLSession, task: NSURLSessionTask, challenge: NSURLAuthenticationChallenge, completionHandler: (p1: NSURLSessionAuthChallengeDisposition, p2: NSURLCredential) => void) {
+        if (isSSLValidationDisabled) {
+            const trust = challenge.protectionSpace.serverTrust;
+            if (trust != null) {
+                const credential = NSURLCredential.credentialForTrust(trust);
+                completionHandler(NSURLSessionAuthChallengeDisposition.UseCredential, credential);
+                return;
+            }
+        }
+        
         // Default behaviour when we don't want certificate pinning.
         if (certificatePinningInstance == null) {
             completionHandler(NSURLSessionAuthChallengeDisposition.PerformDefaultHandling, null);
@@ -462,7 +483,9 @@ export function setImageParseMethod(imageParseMethod: ImageParseMethod) {
 }
 
 export function disableSSLValidation(disable: boolean) {
-    // Doesn't do anything for iOS.
+    defaultSession = null;
+    sessionNotFollowingRedirects = null;
+    isSSLValidationDisabled = disable;
 }
 
 export function setConcurrencyLimits(maxRequests: number, maxRequestsPerHost: number) {
