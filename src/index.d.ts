@@ -113,6 +113,12 @@ export declare function setConcurrencyLimits(maxRequests: number, maxRequestsPer
 export declare function clearCookies(): void;
 
 /**
+ * Disable SSL validation
+ * @param disable true/false
+ */
+export declare function disableSSLValidation(disable: boolean): void;
+
+/**
  * Set a global user agent.
  * @param userAgent The new user agent. Set to null to use the default again.
  */

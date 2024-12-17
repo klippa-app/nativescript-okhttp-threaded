@@ -89,6 +89,7 @@ public class Async {
         private static MemoryCookieJar cookieJar;
         private static CertificatePinner.Builder certificatePinnerBuilder;
         private static ImageParseMethod imageParseMethod = ImageParseMethod.CONTENTTYPE;
+        private static boolean disableSslValidation = false;
 
         public static void InitClient() {
             if (cookieJar == null) {
@@ -96,12 +97,47 @@ public class Async {
             }
 
             if (client == null) {
-                client = new OkHttpClient.Builder()
-                        .writeTimeout(60, TimeUnit.SECONDS)
-                        .readTimeout(60, TimeUnit.SECONDS)
-                        .connectTimeout(60, TimeUnit.SECONDS)
-                        .cookieJar(cookieJar)
-                        .build();
+                OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                    .writeTimeout(60, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .cookieJar(cookieJar);
+
+                if (disableSslValidation) {
+                    // Disable ssl validations
+                    try {
+                        javax.net.ssl.TrustManager TRUST_ALL_CERTS = new javax.net.ssl.X509TrustManager() {
+                            @Override
+                            public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {
+                            }
+
+                            @Override
+                            public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {
+                            }
+
+                            @Override
+                            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                                return new java.security.cert.X509Certificate[] {};
+                            }
+                        };
+
+                        javax.net.ssl.SSLContext sslContext = javax.net.ssl.SSLContext.getInstance("SSL");
+                        sslContext.init(null, new javax.net.ssl.TrustManager[] { TRUST_ALL_CERTS }, new java.security.SecureRandom());
+                        builder.sslSocketFactory(sslContext.getSocketFactory(), (javax.net.ssl.X509TrustManager) TRUST_ALL_CERTS)
+                            .hostnameVerifier(new javax.net.ssl.HostnameVerifier() {
+                                @Override
+                                public boolean verify(String hostname, javax.net.ssl.SSLSession session) {
+                                    return true;
+                                }
+                            });
+                    }  catch (java.security.KeyManagementException e) {
+                        e.printStackTrace();
+                    } catch (java.security.NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                client = builder.build();
             }
         }
 
@@ -186,6 +222,12 @@ public class Async {
             if (cookieJar != null) {
                 cookieJar.clear();
             }
+        }
+
+        public static void DisableSSLValidation(boolean disable) {
+            client = null;
+            disableSslValidation = disable;
+            InitClient();
         }
 
         public static void SetImageParseMethod(ImageParseMethod newImageParseMethod) {

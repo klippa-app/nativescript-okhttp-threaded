@@ -483,6 +483,20 @@ certificatePinningAdd("mydomain.com", ["DCU5TkA8n3L8+QM7dyTjfRlxWibigF+1cxMzRhlJ
 certificatePinningClear();
 ```
 
+### Disable SSL validation
+
+You can disable SSL validations
+
+```typescript
+import { disableSSLValidation } from "@klippa/nativescript-http";
+
+/**
+ * Disable SSL validations
+ * @param disable true/false
+ */
+disableSSLValidation(true);
+```
+
 ## Roadmap
  * Cache control
  * Allowing self signed certificates (WIP in feature/self-signed)
